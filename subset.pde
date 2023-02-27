@@ -52,6 +52,34 @@ final int[][] SQUARES = {
     {600, 600, 300, 300},
 };
 
+
+final int[][] TRIANGLES = {
+    {
+        75,
+        150,
+        25,
+        250,
+        125,
+        250,
+    },
+        {
+        225,
+        150,
+        275,
+        250,
+        175,
+        250,
+    },
+    {
+        150,
+        50,
+        100,
+        150,
+        200,
+        150,
+    },
+};
+
 /* Colors */
 final color RED   = color(255, 0, 0);
 final color GREEN = color(0, 255, 0);
@@ -73,6 +101,25 @@ void setup() {
     background(WHITE);
     drawRasterLines();
     deckCards();
+    drawCards(deckCards);
+
+    // x1_1,
+    // y1_1,
+    // x2_1,
+    // y2_1,
+    // x3_1,
+    // y3_1
+
+    
+    // point(150, 50);
+    // point(100, 150);
+    // point(200, 150);
+    // println(triangle1);
+    // drawShape("triangle", triangle1, RED);
+    // drawShape("triangle", triangle2, BLUE);
+    // drawShape("triangle", triangle3, GREEN);
+
+
     finishedDrawing = true;
     // drawShape("triangle");
 }
@@ -90,7 +137,7 @@ void mousePressed() {
 }
 
 void createCards() {
-    int cardIndex = 0;
+    byte cardIndex = 0;
     byte amountOfAmounts = (byte) AMOUNTS.length;
     byte amountOfShapes = (byte) SHAPES.length;
     byte amountOfColors = (byte) COLORS.length;
@@ -124,25 +171,22 @@ void shuffleCards(String[][] cards) {
 // , byte amount = 1, color rgbColor = BLACK
 void drawShape(
     String shape, 
-    int[] coordinates, 
-    byte amount,
+    int[] coordinates,
     int rgbColor
 ) {
-    if(amount < 1) amount = 1;
-
+    fill(rgbColor);
     switch (shape) {
         case "line":
-            stroke(rgbColor);
-            for (byte i = 0; i < amount; ++i) {
-                line(coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
-            }
-        break;
+            line(coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
+            break;
         case "triangle":
-            fill(255, 0, 0);
-            triangle(50, 50, 150, 50, 100, 150);
-            // for (byte i = 0; i < amount; ++i) {
-            //     triangle(coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
-            // }
+            println("triangleeeeeeeeeeeee");
+            float[] floatCoords = new float[coordinates.length];
+            for (int i = 0; i < coordinates.length; i++) {
+                floatCoords[i] = (float) coordinates[i];
+            }
+            triangle(floatCoords[0], floatCoords[1], floatCoords[2], floatCoords[3], floatCoords[4], floatCoords[5]);
+
             break;
         case "rectangle":
             rect(50, 50, 50, 50);
@@ -184,7 +228,7 @@ color getRgbColor(String colorName) {
 void drawRasterLines() {
     byte amountOfRasterLines = (byte) RASTERLINES.length;
     for (byte i = 0; i < amountOfRasterLines; i++) {
-        drawShape("line", RASTERLINES[i], (byte) 1, (int) 0);
+        drawShape("line", RASTERLINES[i], (int) 0);
     }
 }
 
@@ -217,7 +261,7 @@ void drawSelectedCard(byte index, boolean selected) {
 
     int[] drawSquare = new int[SQUARES[index].length];
     arrayCopy(SQUARES[index], 0, drawSquare, 0, SQUARES[index].length);
-    drawShape("square", drawSquare, (byte) 1, squareColor);
+    drawShape("square", drawSquare, squareColor);
 }
 
 void deckCards() {
@@ -263,5 +307,80 @@ void checkCards(String[][] selectedCards) {
         deckCards[i] = cards[i];
         println(i);
         println(deckCards[i]);
+    }
+}
+
+void drawCards(String[][] cards) {
+    byte cardsAmount = byte(cards.length);
+    for (byte i = 0; i < cardsAmount; ++i) {
+        byte amount = Byte.parseByte(cards[i][0]);
+        color rgbColor = getRgbColor(cards[i][2]);
+        String shape = cards[i][1];
+
+        switch (shape) {
+            case "triangle":
+                switch (amount) {
+                    case 1 :
+                        for (byte t = 1; t < 1; ++t) {
+                            TRIANGLES[t][0] += CARDCOORDINATES[i][0];
+                            TRIANGLES[t][1] += CARDCOORDINATES[i][1];
+                            TRIANGLES[t][2] += CARDCOORDINATES[i][0];
+                            TRIANGLES[t][3] += CARDCOORDINATES[i][1];
+                            TRIANGLES[t][4] += CARDCOORDINATES[i][0];
+                            TRIANGLES[t][5] += CARDCOORDINATES[i][1];
+                            drawShape(
+                                shape,
+                                TRIANGLES[t],
+                                rgbColor
+                            );
+                        }
+                        break;
+                    case 2 :
+                        for (byte t = 2; t < 3; ++t) {
+                            TRIANGLES[t][0] += CARDCOORDINATES[i][0];
+                            TRIANGLES[t][1] += CARDCOORDINATES[i][1];
+                            TRIANGLES[t][2] += CARDCOORDINATES[i][0];
+                            TRIANGLES[t][3] += CARDCOORDINATES[i][1];
+                            TRIANGLES[t][4] += CARDCOORDINATES[i][0];
+                            TRIANGLES[t][5] += CARDCOORDINATES[i][1];
+                            drawShape(
+                                shape,
+                                TRIANGLES[t],
+                                rgbColor
+                            );
+                        }
+                        break;
+                    case 3 :
+                        for (byte t = 0; t < 3; ++t) {
+                            TRIANGLES[t][0] += CARDCOORDINATES[i][0];
+                            TRIANGLES[t][1] += CARDCOORDINATES[i][1];
+                            TRIANGLES[t][2] += CARDCOORDINATES[i][0];
+                            TRIANGLES[t][3] += CARDCOORDINATES[i][1];
+                            TRIANGLES[t][4] += CARDCOORDINATES[i][0];
+                            TRIANGLES[t][5] += CARDCOORDINATES[i][1];
+                            drawShape(
+                                shape,
+                                TRIANGLES[t],
+                                rgbColor
+                            );
+                        }
+                        break;
+                        
+                    default:
+                        println("Invalid shape");
+                        break;	
+                }
+
+                break;
+            case "rectangle":
+                break;
+            case "ellipse":
+                break;
+            case "square":
+                break;
+            default:
+                println("Invalid shape");
+                break;
+        }
     }
 }
