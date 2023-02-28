@@ -54,30 +54,21 @@ final int[][] SQUARES = {
 
 
 final int[][] TRIANGLES = {
-    {
-        75,
-        150,
-        25,
-        250,
-        125,
-        250,
-    },
-        {
-        225,
-        150,
-        275,
-        250,
-        175,
-        250,
-    },
-    {
-        150,
-        50,
-        100,
-        150,
-        200,
-        150,
-    },
+    { 75, 150, 25, 250, 125, 250 },
+    { 225, 150, 275, 250, 175, 250 },
+    { 150, 50, 100, 150, 200, 150 },
+};
+
+final int[][] RECTANGLES = {
+    { 75, 30, 150, 50 },
+    { 75, 125, 150, 50 },
+    { 75, 220, 150, 50 },
+};
+
+final int[][] ELLIPSE = {
+    { 150, 30, 150, 50 },
+    { 150, 125, 150, 50 },
+    { 150, 220, 150, 50 },
 };
 
 /* Colors */
@@ -97,31 +88,26 @@ void setup() {
     createCards();
     shuffleCards(cards);
     // this makes a window of width 900px x height 1000px
-    size(902, 1002);
+    size(901, 1001);
     background(WHITE);
     drawRasterLines();
     deckCards();
+
+    // String[][] testCards = {
+    //     {"1", "rectangle", "red"},
+    //     {"2", "rectangle", "red"},
+    //     {"3", "rectangle", "red"},
+    //     {"1", "rectangle", "green"},
+    //     {"2", "rectangle", "green"},
+    //     {"3", "rectangle", "green"},
+    //     {"1", "rectangle", "blue"},
+    //     {"2", "rectangle", "blue"},
+    //     {"3", "rectangle", "blue"},
+    // };
+
     drawCards(deckCards);
 
-    // x1_1,
-    // y1_1,
-    // x2_1,
-    // y2_1,
-    // x3_1,
-    // y3_1
-
-    
-    // point(150, 50);
-    // point(100, 150);
-    // point(200, 150);
-    // println(triangle1);
-    // drawShape("triangle", triangle1, RED);
-    // drawShape("triangle", triangle2, BLUE);
-    // drawShape("triangle", triangle3, GREEN);
-
-
     finishedDrawing = true;
-    // drawShape("triangle");
 }
 
 void draw() {
@@ -132,8 +118,6 @@ void mousePressed() {
     if(!finishedDrawing) return;
   
     checkClickedCard(mouseX, mouseY);
-    // fill(0);
-    // ellipse(mouseX, mouseY, 50, 50);
 }
 
 void createCards() {
@@ -168,7 +152,7 @@ void shuffleCards(String[][] cards) {
         cards[i] = card;
     }
 }
-// , byte amount = 1, color rgbColor = BLACK
+
 void drawShape(
     String shape, 
     int[] coordinates,
@@ -180,24 +164,28 @@ void drawShape(
             line(coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
             break;
         case "triangle":
-            println("triangleeeeeeeeeeeee");
-            float[] floatCoords = new float[coordinates.length];
+            // println("triangleeeeeeeeeeeee");
+            float[] triangleCoords = new float[coordinates.length];
             for (int i = 0; i < coordinates.length; i++) {
-                floatCoords[i] = (float) coordinates[i];
+                triangleCoords[i] = (float) coordinates[i];
             }
-            triangle(floatCoords[0], floatCoords[1], floatCoords[2], floatCoords[3], floatCoords[4], floatCoords[5]);
+            triangle(triangleCoords[0], triangleCoords[1], triangleCoords[2], triangleCoords[3], triangleCoords[4], triangleCoords[5]);
 
             break;
         case "rectangle":
-            rect(50, 50, 50, 50);
-            break;
-        case "ellipse":
-            ellipse(75, 75, 50, 50);
-            break;
-        case "square":
-            fill(rgbColor);
             rect(coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
             break;
+        case "ellipse":
+            float[] ellipseCoords = new float[coordinates.length];
+            for (int i = 0; i < coordinates.length; i++) {
+                ellipseCoords[i] = (float) coordinates[i];
+            }
+            ellipse(ellipseCoords[0], ellipseCoords[1], ellipseCoords[2], ellipseCoords[3]);
+            break;
+        // case "square":
+        //     fill(rgbColor);
+        //     rect(coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
+        //     break;
         default:
             println("Invalid shape");
             break;
@@ -312,7 +300,8 @@ void checkCards(String[][] selectedCards) {
 
 void drawCards(String[][] cards) {
     byte cardsAmount = byte(cards.length);
-    for (byte i = 0; i < cardsAmount; ++i) {
+    for (byte i = 0; i < cardsAmount; i++) {
+        println(cards[i]);
         byte amount = Byte.parseByte(cards[i][0]);
         color rgbColor = getRgbColor(cards[i][2]);
         String shape = cards[i][1];
@@ -321,60 +310,90 @@ void drawCards(String[][] cards) {
             case "triangle":
                 switch (amount) {
                     case 1 :
-                        for (byte t = 1; t < 1; ++t) {
-                            TRIANGLES[t][0] += CARDCOORDINATES[i][0];
-                            TRIANGLES[t][1] += CARDCOORDINATES[i][1];
-                            TRIANGLES[t][2] += CARDCOORDINATES[i][0];
-                            TRIANGLES[t][3] += CARDCOORDINATES[i][1];
-                            TRIANGLES[t][4] += CARDCOORDINATES[i][0];
-                            TRIANGLES[t][5] += CARDCOORDINATES[i][1];
+                        for (byte t = 2; t < 3; t++) {
+                            int[] triangle = {
+                                (TRIANGLES[t][0] + SQUARES[i][0]),
+                                (TRIANGLES[t][1] + SQUARES[i][1]),
+                                (TRIANGLES[t][2] + SQUARES[i][0]),
+                                (TRIANGLES[t][3] + SQUARES[i][1]),
+                                (TRIANGLES[t][4] + SQUARES[i][0]),
+                                (TRIANGLES[t][5] + SQUARES[i][1]),
+                            };
                             drawShape(
                                 shape,
-                                TRIANGLES[t],
+                                triangle,
                                 rgbColor
                             );
                         }
                         break;
                     case 2 :
-                        for (byte t = 2; t < 3; ++t) {
-                            TRIANGLES[t][0] += CARDCOORDINATES[i][0];
-                            TRIANGLES[t][1] += CARDCOORDINATES[i][1];
-                            TRIANGLES[t][2] += CARDCOORDINATES[i][0];
-                            TRIANGLES[t][3] += CARDCOORDINATES[i][1];
-                            TRIANGLES[t][4] += CARDCOORDINATES[i][0];
-                            TRIANGLES[t][5] += CARDCOORDINATES[i][1];
+                        for (byte t = 0; t < 2; t++) {
+                            int[] triangle = {
+                                (TRIANGLES[t][0] + SQUARES[i][0]),
+                                (TRIANGLES[t][1] + SQUARES[i][1]),
+                                (TRIANGLES[t][2] + SQUARES[i][0]),
+                                (TRIANGLES[t][3] + SQUARES[i][1]),
+                                (TRIANGLES[t][4] + SQUARES[i][0]),
+                                (TRIANGLES[t][5] + SQUARES[i][1]),
+                            };
                             drawShape(
                                 shape,
-                                TRIANGLES[t],
+                                triangle,
                                 rgbColor
                             );
                         }
                         break;
                     case 3 :
-                        for (byte t = 0; t < 3; ++t) {
-                            TRIANGLES[t][0] += CARDCOORDINATES[i][0];
-                            TRIANGLES[t][1] += CARDCOORDINATES[i][1];
-                            TRIANGLES[t][2] += CARDCOORDINATES[i][0];
-                            TRIANGLES[t][3] += CARDCOORDINATES[i][1];
-                            TRIANGLES[t][4] += CARDCOORDINATES[i][0];
-                            TRIANGLES[t][5] += CARDCOORDINATES[i][1];
+                        for (byte t = 0; t < 3; t++) {
+                            int[] triangle = {
+                                (TRIANGLES[t][0] + SQUARES[i][0]),
+                                (TRIANGLES[t][1] + SQUARES[i][1]),
+                                (TRIANGLES[t][2] + SQUARES[i][0]),
+                                (TRIANGLES[t][3] + SQUARES[i][1]),
+                                (TRIANGLES[t][4] + SQUARES[i][0]),
+                                (TRIANGLES[t][5] + SQUARES[i][1]),
+                            };
                             drawShape(
                                 shape,
-                                TRIANGLES[t],
+                                triangle,
                                 rgbColor
                             );
                         }
                         break;
-                        
                     default:
                         println("Invalid shape");
                         break;	
                 }
-
                 break;
             case "rectangle":
+                for (byte r = 0; r < amount; r++) {
+                    int[] rectangle = {
+                        (RECTANGLES[r][0] + CARDCOORDINATES[i][0]),
+                        (RECTANGLES[r][1] + CARDCOORDINATES[i][1]),
+                        RECTANGLES[r][2],
+                        RECTANGLES[r][3],
+                    };
+                    drawShape(
+                        shape,
+                        rectangle,
+                        rgbColor
+                    );
+                }
                 break;
             case "ellipse":
+                for (byte r = 0; r < amount; r++) {
+                    int[] ellipse = {
+                        (ELLIPSE[r][0] + CARDCOORDINATES[i][0]),
+                        (ELLIPSE[r][1] + CARDCOORDINATES[i][1]),
+                        ELLIPSE[r][2],
+                        ELLIPSE[r][3],
+                    };
+                    drawShape(
+                        shape,
+                        ellipse,
+                        rgbColor
+                    );
+                }
                 break;
             case "square":
                 break;
@@ -383,4 +402,8 @@ void drawCards(String[][] cards) {
                 break;
         }
     }
+    // println("-------");
+    // for (int d = 0; d < deckCards.length; d++) {
+    //     println(deckCards[d]);
+    // }
 }
