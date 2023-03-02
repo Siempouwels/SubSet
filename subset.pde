@@ -79,9 +79,8 @@ final color BLACK = color(0);
 final color WHITE = color(255);
 final color GREY  = color(128);
 
-// make sure it is finished drawing
+byte cardsClicked = 0;
 final byte AMOUNTOFCARDS = 9;
-boolean finishedDrawing = false;
 boolean[] selectedCards = new boolean[AMOUNTOFCARDS];
 
 void setup() {
@@ -93,21 +92,7 @@ void setup() {
     drawRasterLines();
     deckCards();
 
-    // String[][] testCards = {
-    //     {"1", "rectangle", "red"},
-    //     {"2", "rectangle", "red"},
-    //     {"3", "rectangle", "red"},
-    //     {"1", "rectangle", "green"},
-    //     {"2", "rectangle", "green"},
-    //     {"3", "rectangle", "green"},
-    //     {"1", "rectangle", "blue"},
-    //     {"2", "rectangle", "blue"},
-    //     {"3", "rectangle", "blue"},
-    // };
-
     drawCards(deckCards);
-
-    finishedDrawing = true;
 }
 
 void draw() {
@@ -115,8 +100,6 @@ void draw() {
 }
 
 void mousePressed() {
-    if(!finishedDrawing) return;
-  
     checkClickedCard(mouseX, mouseY);
 }
 
@@ -164,7 +147,6 @@ void drawShape(
             line(coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
             break;
         case "triangle":
-            // println("triangleeeeeeeeeeeee");
             float[] triangleCoords = new float[coordinates.length];
             for (int i = 0; i < coordinates.length; i++) {
                 triangleCoords[i] = (float) coordinates[i];
@@ -182,10 +164,10 @@ void drawShape(
             }
             ellipse(ellipseCoords[0], ellipseCoords[1], ellipseCoords[2], ellipseCoords[3]);
             break;
-        // case "square":
-        //     fill(rgbColor);
-        //     rect(coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
-        //     break;
+        case "square":
+            fill(rgbColor);
+            rect(coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
+            break;
         default:
             println("Invalid shape");
             break;
@@ -235,6 +217,15 @@ void checkClickedCard(int x, int y) {
             // flip the boolean
             selectedCards[i] = !selectedCards[i];
             drawSelectedCard(i, selectedCards[i]);
+            
+            byte count = 0;
+            for (boolean value : selectedCards) {
+                if (value == true) count++;
+            }
+
+            if (count >= 3) {
+                
+            }
         }
     }
 }
@@ -247,9 +238,13 @@ void drawSelectedCard(byte index, boolean selected) {
         squareColor = GREY;
     }
 
-    int[] drawSquare = new int[SQUARES[index].length];
-    arrayCopy(SQUARES[index], 0, drawSquare, 0, SQUARES[index].length);
+    int[] drawSquare = SQUARES[index];
     drawShape("square", drawSquare, squareColor);
+
+    String[][] emptyCards = new String[9][3];
+
+    emptyCards[index] = deckCards[index];
+    drawCards(emptyCards);
 }
 
 void deckCards() {
@@ -301,7 +296,14 @@ void checkCards(String[][] selectedCards) {
 void drawCards(String[][] cards) {
     byte cardsAmount = byte(cards.length);
     for (byte i = 0; i < cardsAmount; i++) {
-        println(cards[i]);
+        // this will prevent empty arrays to enter the switch statment
+        if (cards[i].length == 0 ||
+            cards[i][0] == null ||
+            cards[i][1] == null ||
+            cards[i][2] == null
+        ) continue;
+        
+
         byte amount = Byte.parseByte(cards[i][0]);
         color rgbColor = getRgbColor(cards[i][2]);
         String shape = cards[i][1];
@@ -361,7 +363,7 @@ void drawCards(String[][] cards) {
                         }
                         break;
                     default:
-                        println("Invalid shape");
+                        println("Invalid amount of triangles");
                         break;	
                 }
                 break;
@@ -402,8 +404,60 @@ void drawCards(String[][] cards) {
                 break;
         }
     }
-    // println("-------");
-    // for (int d = 0; d < deckCards.length; d++) {
-    //     println(deckCards[d]);
-    // }
+}
+
+boolean checkSelection(String[][] cards) {
+    byte numAttributes = (byte) cards[0].length;
+    boolean[] correctAttribute = new boolean[numAttributes];
+
+    for (byte i = 0; i < numAttributes; i++) {
+        String card1 = cards[0][i];
+        String card2 = cards[1][i];
+        String card3 = cards[2][i];
+
+        if (card1.equals(card2) &&
+            card2.equals(card3)
+        ) {
+            correctAttribute[i] = true;
+        } else if (
+            !card1.equals(card2) &&
+            !card1.equals(card3) &&
+            !card2.equals(card3)
+        ) {
+            correctAttribute[i] = true;
+        } else {
+            return false;
+        }
+    }
+
+    for (boolean correct : correctAttribute) {
+        if (!correct) return false;
+    }
+
+    return true;
+}
+
+void generateUniqueSets(byte[] arr) {
+    int numSets = 0;
+    byte amountOfCards = (byte) arr.length;
+
+    byte[][] sets = new byte[amountOfCards*(amountOfCards - 1)*(amountOfCards -2 )/6][3];
+
+    for (byte i = 0; i < amountOfCards - 2; i++) {
+        for (byte j = (byte)(i + 1); j < amountOfCards - 1; j++) {
+            for (byte k = (byte)(j + 1); k < amountOfCards; k++) {
+            sets[numSets][0] = arr[i];
+            sets[numSets][1] = arr[j];
+            sets[numSets][2] = arr[k];
+            numSets++;
+            }
+        }
+    }
+
+    // Print all sets
+    for (int i = 0; i < numSets; i++) {
+        for (int j = 0; j < 3; j++) {
+            print(sets[i][j] + " ");
+        }
+    }
 }
