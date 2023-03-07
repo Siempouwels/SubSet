@@ -79,20 +79,33 @@ final color BLACK = color(0);
 final color WHITE = color(255);
 final color GREY  = color(128);
 
-byte cardsClicked = 0;
-final byte AMOUNTOFCARDS = 9;
-boolean[] selectedCards = new boolean[AMOUNTOFCARDS];
+boolean[] selectedCards = new boolean[9];
 
 void setup() {
     createCards();
     shuffleCards(cards);
-    // this makes a window of width 900px x height 1000px
+    // this makes a window of width 901px x height 1001px
     size(901, 1001);
     background(WHITE);
     drawRasterLines();
     deckCards();
 
     drawCards(deckCards);
+
+    byte[] deckCardIndexes = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    byte[][] cardCombinations = generateUniqueSets(deckCardIndexes);
+    int combinationSize = cardCombinations.length;
+    String[][] currentDeck = new String[combinationSize][3];
+    int correctSets = 0;
+
+    for (int i = 0; i < combinationSize; i++) {
+        currentDeck[0] = cards[cardCombinations[i][0]];
+        currentDeck[1] = cards[cardCombinations[i][1]];
+        currentDeck[2] = cards[cardCombinations[i][2]];
+        if(checkSelection(currentDeck)) correctSets++;
+    }
+    print("correctSets: ");
+    println(correctSets);
 }
 
 void draw() {
@@ -209,8 +222,10 @@ void checkClickedCard(int x, int y) {
         int[] card = CARDCOORDINATES[i];
 
         // Check if the mouse is within the x and y range of the card
-        if (x >= card[0] && x <= card[2] &&
-            y >= card[1] && y <= card[3]) {
+        if (
+            x >= card[0] && x <= card[2] &&
+            y >= card[1] && y <= card[3]
+        ) {
                 
             // Print the index of the clicked card
             println("Card " + (i + 1) + " was clicked.");
@@ -314,12 +329,12 @@ void drawCards(String[][] cards) {
                     case 1 :
                         for (byte t = 2; t < 3; t++) {
                             int[] triangle = {
-                                (TRIANGLES[t][0] + SQUARES[i][0]),
-                                (TRIANGLES[t][1] + SQUARES[i][1]),
-                                (TRIANGLES[t][2] + SQUARES[i][0]),
-                                (TRIANGLES[t][3] + SQUARES[i][1]),
-                                (TRIANGLES[t][4] + SQUARES[i][0]),
-                                (TRIANGLES[t][5] + SQUARES[i][1]),
+                                (TRIANGLES[t][0] + CARDCOORDINATES[i][0]),
+                                (TRIANGLES[t][1] + CARDCOORDINATES[i][1]),
+                                (TRIANGLES[t][2] + CARDCOORDINATES[i][0]),
+                                (TRIANGLES[t][3] + CARDCOORDINATES[i][1]),
+                                (TRIANGLES[t][4] + CARDCOORDINATES[i][0]),
+                                (TRIANGLES[t][5] + CARDCOORDINATES[i][1]),
                             };
                             drawShape(
                                 shape,
@@ -331,12 +346,12 @@ void drawCards(String[][] cards) {
                     case 2 :
                         for (byte t = 0; t < 2; t++) {
                             int[] triangle = {
-                                (TRIANGLES[t][0] + SQUARES[i][0]),
-                                (TRIANGLES[t][1] + SQUARES[i][1]),
-                                (TRIANGLES[t][2] + SQUARES[i][0]),
-                                (TRIANGLES[t][3] + SQUARES[i][1]),
-                                (TRIANGLES[t][4] + SQUARES[i][0]),
-                                (TRIANGLES[t][5] + SQUARES[i][1]),
+                                (TRIANGLES[t][0] + CARDCOORDINATES[i][0]),
+                                (TRIANGLES[t][1] + CARDCOORDINATES[i][1]),
+                                (TRIANGLES[t][2] + CARDCOORDINATES[i][0]),
+                                (TRIANGLES[t][3] + CARDCOORDINATES[i][1]),
+                                (TRIANGLES[t][4] + CARDCOORDINATES[i][0]),
+                                (TRIANGLES[t][5] + CARDCOORDINATES[i][1]),
                             };
                             drawShape(
                                 shape,
@@ -348,12 +363,12 @@ void drawCards(String[][] cards) {
                     case 3 :
                         for (byte t = 0; t < 3; t++) {
                             int[] triangle = {
-                                (TRIANGLES[t][0] + SQUARES[i][0]),
-                                (TRIANGLES[t][1] + SQUARES[i][1]),
-                                (TRIANGLES[t][2] + SQUARES[i][0]),
-                                (TRIANGLES[t][3] + SQUARES[i][1]),
-                                (TRIANGLES[t][4] + SQUARES[i][0]),
-                                (TRIANGLES[t][5] + SQUARES[i][1]),
+                                (TRIANGLES[t][0] + CARDCOORDINATES[i][0]),
+                                (TRIANGLES[t][1] + CARDCOORDINATES[i][1]),
+                                (TRIANGLES[t][2] + CARDCOORDINATES[i][0]),
+                                (TRIANGLES[t][3] + CARDCOORDINATES[i][1]),
+                                (TRIANGLES[t][4] + CARDCOORDINATES[i][0]),
+                                (TRIANGLES[t][5] + CARDCOORDINATES[i][1]),
                             };
                             drawShape(
                                 shape,
@@ -437,7 +452,7 @@ boolean checkSelection(String[][] cards) {
     return true;
 }
 
-void generateUniqueSets(byte[] arr) {
+byte[][] generateUniqueSets(byte[] arr) {
     int numSets = 0;
     byte amountOfCards = (byte) arr.length;
 
@@ -453,11 +468,11 @@ void generateUniqueSets(byte[] arr) {
             }
         }
     }
-
+    return sets;
     // Print all sets
-    for (int i = 0; i < numSets; i++) {
-        for (int j = 0; j < 3; j++) {
-            print(sets[i][j] + " ");
-        }
-    }
+    // for (int i = 0; i < numSets; i++) {
+    //     for (int j = 0; j < 3; j++) {
+    //         print(sets[i][j] + " ");
+    //     }
+    // }
 }
