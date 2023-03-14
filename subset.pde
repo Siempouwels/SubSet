@@ -80,6 +80,9 @@ final color WHITE = color(255);
 final color GREY  = color(128);
 
 boolean[] selectedCards = new boolean[9];
+int amountOfGuesses = 0;
+byte scorePlayer1 = 0;
+byte scorePlayer2 = 0;
 
 void setup() {
     createCards();
@@ -91,21 +94,11 @@ void setup() {
     deckCards();
 
     drawCards(deckCards);
-
-    byte[] deckCardIndexes = {0, 1, 2, 3, 4, 5, 6, 7, 8};
-    byte[][] cardCombinations = generateUniqueSets(deckCardIndexes);
-    int combinationSize = cardCombinations.length;
-    String[][] currentDeck = new String[combinationSize][3];
-    int correctSets = 0;
-
-    for (int i = 0; i < combinationSize; i++) {
-        currentDeck[0] = cards[cardCombinations[i][0]];
-        currentDeck[1] = cards[cardCombinations[i][1]];
-        currentDeck[2] = cards[cardCombinations[i][2]];
-        if(checkSelection(currentDeck)) correctSets++;
-    }
-    print("correctSets: ");
-    println(correctSets);
+    // , 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
+    byte[] byteArray = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
+    int possibleSets = checkPossibleSets(byteArray);
+    println(possibleSets);
+    // printCards(deckCards);
 }
 
 void draw() {
@@ -234,12 +227,60 @@ void checkClickedCard(int x, int y) {
             drawSelectedCard(i, selectedCards[i]);
             
             byte count = 0;
-            for (boolean value : selectedCards) {
-                if (value == true) count++;
+
+            byte selectedCardsLength = (byte) selectedCards.length;
+            byte[] cardIndexes = new byte[3];
+            for (byte j = 0; j < selectedCardsLength; ++j) {
+                if(selectedCards[j]){
+                    cardIndexes[count] = j;
+                    count++;
+                }
             }
 
             if (count >= 3) {
+                amountOfGuesses++;
+
+                String[][] pickedCards = {
+                    deckCards[cardIndexes[0]],
+                    deckCards[cardIndexes[1]],
+                    deckCards[cardIndexes[2]],
+                };
+
+                boolean result = checkSelection(pickedCards);
                 
+                if(result){
+                    if (amountOfGuesses % 2 == 0) {
+                        scorePlayer2++;
+                    } else {
+                        scorePlayer1++;
+                    }
+                }
+
+                for (byte j = 0; j < cardIndexes.length; ++j) {
+                    deckCards[cardIndexes[j]][0] = null;
+                    deckCards[cardIndexes[j]][1] = null;
+                    deckCards[cardIndexes[j]][2] = null;
+
+                    int[] drawSquare = SQUARES[cardIndexes[j]];
+                    drawShape("square", drawSquare, WHITE);
+                }
+
+                for (int k = 0; k < selectedCards.length; ++k) {
+                    selectedCards[k] = false;
+                }
+
+                deckCards();
+
+                // pick the new decked cards and draw them
+                // String[][] newDeckedCards = {
+                //     deckCards[cardIndexes[0]],
+                //     deckCards[cardIndexes[1]],
+                //     deckCards[cardIndexes[2]],
+                // };
+
+                drawCards(deckCards);
+                println("score p1: " + scorePlayer1);
+                println("score p2: " + scorePlayer2);
             }
         }
     }
@@ -469,10 +510,37 @@ byte[][] generateUniqueSets(byte[] arr) {
         }
     }
     return sets;
-    // Print all sets
-    // for (int i = 0; i < numSets; i++) {
-    //     for (int j = 0; j < 3; j++) {
-    //         print(sets[i][j] + " ");
-    //     }
-    // }
+}
+
+void printCards(String[][] cards){
+    for (byte i = 0; i < cards.length; i++) {
+        println("______________" + i + "______________");
+        print(cards[i][0]);
+        print(", ");
+        print(cards[i][1]);
+        print(", ");
+        print(cards[i][2]);
+        println();
+    }
+}
+
+int checkPossibleSets(byte[] indexes){
+    byte[][] cardCombinations = generateUniqueSets(indexes);
+    int combinationSize = cardCombinations.length;
+    // println(combinationSize);
+    String[][] currentDeck = new String[combinationSize][3];
+    int correctSets = 0;
+
+    for (int i = 0; i < combinationSize; i++) {
+        // println(cardCombinations[i][0]);
+        // println(cardCombinations[i][1]);
+        // println(cardCombinations[i][2]);
+        currentDeck[0] = cards[cardCombinations[i][0]];
+        currentDeck[1] = cards[cardCombinations[i][1]];
+        currentDeck[2] = cards[cardCombinations[i][2]];
+        if(checkSelection(currentDeck)) correctSets++;
+    }
+    // print("correctSets: ");
+    // println(correctSets);
+    return correctSets;
 }
