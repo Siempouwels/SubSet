@@ -80,7 +80,9 @@ final color WHITE = color(255);
 final color GREY  = color(128);
 
 boolean[] selectedCards = new boolean[9];
+byte[] deckededCardIndexes = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
 int amountOfGuesses = 0;
+int possibleSets = 0;
 byte scorePlayer1 = 0;
 byte scorePlayer2 = 0;
 
@@ -90,14 +92,18 @@ void setup() {
     // this makes a window of width 901px x height 1001px
     size(901, 1001);
     background(WHITE);
-    drawRasterLines();
     deckCards();
 
+
+    possibleSets = checkPossibleSets(deckededCardIndexes);
+    if(possibleSets < 1){
+        endGame();
+        return;
+    }
+
+    drawRasterLines();
     drawCards(deckCards);
-    // , 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
-    byte[] byteArray = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
-    int possibleSets = checkPossibleSets(byteArray);
-    println(possibleSets);
+    
     // printCards(deckCards);
 }
 
@@ -213,7 +219,6 @@ void checkClickedCard(int x, int y) {
 
     for (byte i = 0; i < amountOfcoordinates; i++) {
         int[] card = CARDCOORDINATES[i];
-
         // Check if the mouse is within the x and y range of the card
         if (
             x >= card[0] && x <= card[2] &&
@@ -221,7 +226,7 @@ void checkClickedCard(int x, int y) {
         ) {
                 
             // Print the index of the clicked card
-            println("Card " + (i + 1) + " was clicked.");
+            // println("Card " + (i + 1) + " was clicked.");
             // flip the boolean
             selectedCards[i] = !selectedCards[i];
             drawSelectedCard(i, selectedCards[i]);
@@ -230,7 +235,7 @@ void checkClickedCard(int x, int y) {
 
             byte selectedCardsLength = (byte) selectedCards.length;
             byte[] cardIndexes = new byte[3];
-            for (byte j = 0; j < selectedCardsLength; ++j) {
+            for (byte j = 0; j < selectedCardsLength; j++) {
                 if(selectedCards[j]){
                     cardIndexes[count] = j;
                     count++;
@@ -238,6 +243,9 @@ void checkClickedCard(int x, int y) {
             }
 
             if (count >= 3) {
+                println("selectedCards: ");
+                println(selectedCards);
+
                 amountOfGuesses++;
 
                 String[][] pickedCards = {
@@ -270,17 +278,17 @@ void checkClickedCard(int x, int y) {
                 }
 
                 deckCards();
-
-                // pick the new decked cards and draw them
-                // String[][] newDeckedCards = {
-                //     deckCards[cardIndexes[0]],
-                //     deckCards[cardIndexes[1]],
-                //     deckCards[cardIndexes[2]],
-                // };
-
+                
+                printCards(cards);
+                possibleSets = checkPossibleSets(deckededCardIndexes);
+                
+                if(possibleSets < 1){
+                    endGame();
+                    return;
+                }
+                println("possibleSets");
+                println(possibleSets);
                 drawCards(deckCards);
-                println("score p1: " + scorePlayer1);
-                println("score p2: " + scorePlayer2);
             }
         }
     }
@@ -344,8 +352,6 @@ void checkCards(String[][] selectedCards) {
     
     for (byte i = 0; i < selectedCardsAmount; i++) {
         deckCards[i] = cards[i];
-        println(i);
-        println(deckCards[i]);
     }
 }
 
@@ -466,7 +472,7 @@ boolean checkSelection(String[][] cards) {
     byte numAttributes = (byte) cards[0].length;
     boolean[] correctAttribute = new boolean[numAttributes];
 
-    for (byte i = 0; i < numAttributes; i++) {
+    for (int i = 0; i < numAttributes; i++) {
         String card1 = cards[0][i];
         String card2 = cards[1][i];
         String card3 = cards[2][i];
@@ -482,7 +488,7 @@ boolean checkSelection(String[][] cards) {
         ) {
             correctAttribute[i] = true;
         } else {
-            return false;
+            correctAttribute[i] = false;
         }
     }
 
@@ -535,12 +541,35 @@ int checkPossibleSets(byte[] indexes){
         // println(cardCombinations[i][0]);
         // println(cardCombinations[i][1]);
         // println(cardCombinations[i][2]);
-        currentDeck[0] = cards[cardCombinations[i][0]];
-        currentDeck[1] = cards[cardCombinations[i][1]];
-        currentDeck[2] = cards[cardCombinations[i][2]];
+        currentDeck[0] = deckCards[cardCombinations[i][0]];
+        currentDeck[1] = deckCards[cardCombinations[i][1]];
+        currentDeck[2] = deckCards[cardCombinations[i][2]];
         if(checkSelection(currentDeck)) correctSets++;
     }
-    // print("correctSets: ");
-    // println(correctSets);
+    
     return correctSets;
+}
+
+void endGame() {
+    background(WHITE);
+
+    // Determine the winner
+    String winner = "";
+    if (scorePlayer1 > scorePlayer2) {
+        winner = "Player 1";
+    } else if (scorePlayer2 > scorePlayer1) {
+        winner = "Player 2";
+    } else {
+        winner = "Tie game";
+    }
+
+    // Display the final scores and winner
+    textSize(32);
+    fill(BLACK);
+    text("Final Scores:", 100, 100);
+    textSize(24);
+    text("Player 1: " + scorePlayer1, 100, 150);
+    text("Player 2: " + scorePlayer2, 100, 200);
+    textSize(32);
+    text(winner + " wins!", 100, 300);
 }
