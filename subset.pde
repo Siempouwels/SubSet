@@ -87,6 +87,7 @@ byte scorePlayer1 = 0;
 byte scorePlayer2 = 0;
 
 void setup() {
+    // tests();
     createCards();
     shuffleCards(cards);
     // this makes a window of width 901px x height 1001px
@@ -243,8 +244,8 @@ void checkClickedCard(int x, int y) {
             }
 
             if (count >= 3) {
-                println("selectedCards: ");
-                println(selectedCards);
+                // println("selectedCards: ");
+                // println(selectedCards);
 
                 amountOfGuesses++;
 
@@ -279,16 +280,19 @@ void checkClickedCard(int x, int y) {
 
                 deckCards();
                 
-                printCards(cards);
+                // printCards(cards);
+                // printCards(deckCards);
+                drawCards(deckCards);
+
                 possibleSets = checkPossibleSets(deckededCardIndexes);
                 
                 if(possibleSets < 1){
+                    printCards(deckCards);
                     endGame();
                     return;
                 }
-                println("possibleSets");
-                println(possibleSets);
-                drawCards(deckCards);
+                // println("possibleSets");
+                // println(possibleSets);
             }
         }
     }
@@ -322,7 +326,7 @@ void deckCards() {
             deckCards[i][2] == null
         ){
             boolean cardFound = false;
-            for (byte cardIndex = (byte) (cardsAmount - 1); cardIndex >= 0; cardIndex--) {
+            for (int cardIndex = (cardsAmount - 1); cardIndex >= 0; cardIndex--) {
                 if(
                     cards[cardIndex][0] != null &&
                     cards[cardIndex][1] != null &&
@@ -476,19 +480,25 @@ boolean checkSelection(String[][] cards) {
         String card1 = cards[0][i];
         String card2 = cards[1][i];
         String card3 = cards[2][i];
-
-        if (card1.equals(card2) &&
-            card2.equals(card3)
-        ) {
-            correctAttribute[i] = true;
-        } else if (
-            !card1.equals(card2) &&
-            !card1.equals(card3) &&
-            !card2.equals(card3)
-        ) {
-            correctAttribute[i] = true;
-        } else {
-            correctAttribute[i] = false;
+        println(card1);
+        if(
+            card1 != null &&
+            card2 != null &&
+            card3 != null
+        ){
+            if (card1.equals(card2) &&
+                card2.equals(card3)
+            ) {
+                correctAttribute[i] = true;
+            } else if (
+                !card1.equals(card2) &&
+                !card1.equals(card3) &&
+                !card2.equals(card3)
+            ) {
+                correctAttribute[i] = true;
+            } else {
+                correctAttribute[i] = false;
+            }
         }
     }
 
@@ -544,7 +554,13 @@ int checkPossibleSets(byte[] indexes){
         currentDeck[0] = deckCards[cardCombinations[i][0]];
         currentDeck[1] = deckCards[cardCombinations[i][1]];
         currentDeck[2] = deckCards[cardCombinations[i][2]];
-        if(checkSelection(currentDeck)) correctSets++;
+        if(checkSelection(currentDeck) == true){
+            correctSets++;
+            // println(currentDeck[0]);
+            // println(currentDeck[1]);
+            // println(currentDeck[2]);
+            // println("_________");
+        }
     }
     
     return correctSets;
@@ -572,4 +588,50 @@ void endGame() {
     text("Player 2: " + scorePlayer2, 100, 200);
     textSize(32);
     text(winner + " wins!", 100, 300);
+}
+
+void tests() {
+    createCards();
+    if(cards.length == 27) println("Correct");
+    String[][] oldOrder = new String[27][3];
+    shuffleCards(cards);
+    if(
+        cards[0][0] != oldOrder [0][0] ||
+        cards[0][1] != oldOrder [0][1] ||
+        cards[0][2] != oldOrder [0][2]
+    ){
+        println("Correct");
+    }
+
+    deckCards();
+    for (int i = 0; i < 9; ++i) {
+        if(
+            deckCards[i][0] == null ||
+            deckCards[i][1] == null ||
+            deckCards[i][2] == null
+        ){
+            println("Error");
+        }
+    }
+    println("Correct");
+
+    byte[][] cardCombinations = generateUniqueSets(deckededCardIndexes);
+    println(cardCombinations.length);
+
+    possibleSets = checkPossibleSets(deckededCardIndexes);
+    if(possibleSets > 0) println("Correct");
+    
+    color red = getRgbColor("red");
+    color green = getRgbColor("green");
+    color blue = getRgbColor("blue");
+    color randomString = getRgbColor("safddsafdsaf");
+    if(
+        red == -65536 &&
+        green == -16711936 &&
+        blue == -16776961 &&
+        randomString == -1
+    ){
+        println("Correct");
+    }
+
 }
