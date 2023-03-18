@@ -582,8 +582,8 @@ void drawRealtimeInfo() {
     fill(255);
     rect(0, 900, width, 100);
     fill(0);
-    text("Possible sets: " + possibleSets, width/2, 930);
-    text("Cards left: " + cardsLeft, width/2, 970);
+    text("Mogelijke sets: " + possibleSets, width/2, 930);
+    text("Kaarten over: " + cardsLeft, width/2, 970);
     
     textSize(20);
     fill(0);
