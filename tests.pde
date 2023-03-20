@@ -1,4 +1,3 @@
-
 void tests() {
     createCards();
     if(cards.length == 27) println("Correct");
@@ -32,7 +31,7 @@ void tests() {
     color red = getRgbColor("red");
     color green = getRgbColor("green");
     color blue = getRgbColor("blue");
-    color randomString = getRgbColor("blue");
+    color randomString = getRgbColor("sfdafsfdadsaf");
     if(
         red == -65536 &&
         green == -16711936 &&
@@ -41,5 +40,21 @@ void tests() {
     ){
         println("Correct");
     }
+}
 
+
+void testDrawings() {
+    String[][] uniqueArrays = {
+        { "1", "triangle", "blue" },
+        { "2", "rectangle", "red" },
+        { "3", "ellipse", "green" },
+        { "1", "rectangle", "green" },
+        { "2", "ellipse", "blue" },
+        { "3", "triangle", "red" },
+        { "1", "ellipse", "red" },
+        { "2", "triangle", "green" },
+        { "3", "rectangle", "blue" }
+    };
+    drawRasterLines();
+    drawCards(uniqueArrays);
 }

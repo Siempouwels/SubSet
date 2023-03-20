@@ -1,11 +1,12 @@
 void setup() {
-    // tests();
     createCards();
     shuffleCards(cards);
     // this makes a window of width 901px x height 1001px
     size(901, 1001);
     background(WHITE);
     smooth();
+    // tests();
+    // testDrawings();
     deckCards();
 
     possibleSets = checkPossibleSets(deckededCardIndexes);
